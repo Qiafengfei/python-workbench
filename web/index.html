@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="editor-style-nonce" content="__EDITOR_STYLE_NONCE__">
+  <title>轻量 · Python 编辑器</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/vendor/code-editor.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5a1 1 0 0 1 1-1h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5v18h14V8Zm0 0v5h5M8 13h8m-8 4h5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M18 3H4v18h16V5ZM8 3v6h8V3M8 21v-7h8v7"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8Z"/></symbol>
+    <symbol id="i-play-all" viewBox="0 0 24 24"><path d="m4 5 10 7-10 7Zm12 0v14m4-14v14"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 4-8 9-8 9s-8-5-8-9V6Zm-4 9 3 3 5-6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m10 3-1 3-3 1-3-1-1 4 2 2-1 3 3 3 3-1 3 2 3-2 3 1 3-3-1-3 2-2-1-4-3 1-3-1-1-3Z"/><circle cx="12" cy="11" r="3"/></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 2v10M6 5a9 9 0 1 0 12 0"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><path d="m4 6 6 6-6 6m9 0h7"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+  </svg>
+
+  <header class="app-header">
+    <div class="brand"><svg class="brand-mark" aria-hidden="true"><use href="#i-code"/></svg><strong>轻量</strong><span class="brand-caption">Python 编辑器</span></div>
+    <div class="workspace-bar"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg><span id="workspace-folder">未选择工作文件夹</span><button id="select-folder" class="quiet-button">选择文件夹</button></div>
+    <div class="environment"><label class="env-label" for="interpreter">环境</label><select id="interpreter" aria-label="Python 解释器"></select><button id="manage-interpreters" class="icon-button" title="管理解释器" aria-label="管理解释器"><svg class="icon" aria-hidden="true"><use href="#i-settings"/></svg></button><button id="add-interpreter" class="quiet-button" title="添加 Python 解释器"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg><span>添加</span></button></div>
+    <button id="close-app" class="quiet-button close-button" title="关闭编辑器并结束后台" aria-label="关闭编辑器"><svg class="icon" aria-hidden="true"><use href="#i-power"/></svg><span>关闭编辑器</span></button>
+  </header>
+
+  <main id="workspace">
+    <section class="editor-pane" aria-label="代码编辑区">
+      <div class="file-bar">
+        <div class="file-tab"><span class="python-badge" aria-hidden="true">py</span><span id="filename">未命名.py</span><span id="dirty-dot" class="dirty-dot" title="有未保存的修改" hidden></span></div>
+        <div class="file-actions"><button id="new-file" disabled title="请先选择工作文件夹"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>新建</button><button id="open-file"><svg class="icon" aria-hidden="true"><use href="#i-folder"/></svg>打开</button><button id="rename-file" disabled>重命名</button><span class="action-separator" aria-hidden="true"></span><button id="save-file" disabled title="保存文件 (Ctrl+S)"><svg class="icon" aria-hidden="true"><use href="#i-save"/></svg>保存 <kbd>Ctrl S</kbd></button><button id="save-as" disabled>另存为</button></div>
+        <span class="file-language">Python</span>
+      </div>
+      <div class="editor-toolbar">
+        <div class="section-name"><span>代码</span><span class="protection-note" title="已运行代码块整块删除前需要确认"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>删除保护</span><button id="delete-block" class="quiet-button" hidden title="删除光标所在的已运行代码块，需要确认"><svg class="icon" aria-hidden="true"><use href="#i-trash"/></svg>删除已运行块</button></div>
+        <div class="run-actions"><button id="cancel-buffer" class="quiet-button" hidden>取消待续代码</button><button id="run-selection" class="quiet-button" hidden>运行选区</button><button id="run-all" class="quiet-button"><svg class="icon" aria-hidden="true"><use href="#i-play-all"/></svg>运行全部</button><button id="run-code" class="primary-button"><svg class="icon" aria-hidden="true"><use href="#i-play"/></svg>运行新增/修改 <kbd>Ctrl ↵</kbd></button></div>
+      </div>
+      <div class="editor-surface" id="editor-surface"><div id="editor" class="code-editor"></div></div>
+      <div class="editor-footer"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg><span id="file-path">尚未保存到本地</span><span id="cursor-position">行 1，列 1</span><span id="encoding">UTF-8</span></div>
+    </section>
+
+    <div id="divider" role="separator" aria-label="调整编辑区和输出区高度" aria-orientation="horizontal" tabindex="0"><span></span></div>
+
+    <section id="output-pane" class="output-pane" aria-label="运行输出">
+      <div class="output-toolbar"><div class="section-name"><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg><span class="panel-title">输出</span><span id="status" class="status"><i></i>连接中</span></div><div class="output-actions"><button id="stop-code" class="danger-button" disabled><svg class="icon" aria-hidden="true"><use href="#i-stop"/></svg>停止并重置</button><button id="reset-session" class="quiet-button"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>重置会话</button><button id="clear-output" class="quiet-button">清空输出</button><button id="close-output" class="icon-button" title="关闭输出栏" aria-label="关闭输出栏" aria-controls="output-pane">×</button></div></div>
+      <div id="output-scroll" tabindex="0" aria-label="输出内容"><div id="output-empty"><svg class="empty-symbol" aria-hidden="true"><use href="#i-terminal"/></svg><div><p>运行结果会显示在这里</p><span>运行全部时查看完整输出；增量运行的结果跟在代码后面。</span></div></div><pre id="output" aria-live="off"></pre></div>
+      <form id="input-form" hidden><label for="program-input">程序等待输入 <span>Enter 提交</span></label><div><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg><input id="program-input" autocomplete="off" aria-label="程序输入" maxlength="8192"><button class="primary-button" type="submit">提交</button></div></form>
+    </section>
+  </main>
+
+  <footer class="app-footer"><span><i class="local-dot"></i>本机运行</span><span id="session-note">手动执行，变量保留</span><button id="show-output" class="quiet-button" hidden aria-controls="output-pane" title="显示底部输出栏"><svg class="icon" aria-hidden="true"><use href="#i-terminal"/></svg>显示输出</button><span class="footer-shortcut"><kbd>Ctrl</kbd><kbd>Enter</kbd>运行</span></footer>
+  <div id="toast" role="status" hidden></div>
+
+  <dialog id="name-dialog"><form id="name-form"><h2 id="name-title">新建 Python 文件</h2><p id="name-location"></p><label for="file-name-input">文件名</label><input id="file-name-input" autocomplete="off" maxlength="200" placeholder="例如：练习.py" required><p id="name-error" role="alert" hidden></p><div class="dialog-actions"><button id="cancel-name" type="button" class="secondary-button">取消</button><button id="submit-name" type="submit" class="primary-button">创建文件</button></div></form></dialog>
+  <dialog id="confirm-dialog"><form method="dialog"><h2>先保存修改？</h2><p>当前文件有修改。保存后再继续，或放弃这次修改。</p><div class="dialog-actions"><button value="cancel" class="secondary-button">取消</button><button value="discard" class="quiet-button">放弃修改</button><button value="save" class="primary-button">保存并继续</button></div></form></dialog>
+  <dialog id="interpreters-dialog"><div class="dialog-heading"><h2>Python 解释器</h2><button id="close-interpreters" class="icon-button" aria-label="关闭解释器管理">×</button></div><p>选择代码运行的环境。切换环境会重置会话，清除已有变量。</p><h3 class="list-heading">已添加的环境</h3><div id="interpreter-list"></div><div class="scan-heading"><h3 class="list-heading">检测到的本地环境</h3><button id="rescan-interpreters" class="quiet-button"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg>重新检测</button></div><p id="scan-status" role="status">正在检测本机 Python…</p><div id="discovered-list"></div><div class="manual-picker"><span>没有找到需要的环境？</span><button id="dialog-add-interpreter" class="secondary-button">浏览文件…</button></div></dialog>
+</body>
+</html>
